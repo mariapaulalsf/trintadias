@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desafio 1 Mês Cocotas</title>
+</head>
+<body>
+    
+    <div id="cadastro">
+        <h2>Faça seu Cadastro:</h2>
+        <label for="nomeUsuario">Digite seu nome:</label>
+        <input type="text" id="nomeUsuario" placeholder="Nome completo"><br>
+        <button onclick="registrarUsuario()">Registrar</button>
+    </div>
+
+    <div id="desafio" style="display:none;">
+        <h2 id="boasVindas"></h2>
+        <p>Objetivos:</p>
+        <ul>
+            <li>Beber 2 litros de água por dia</li>
+            <li>Treinar o abdômen 3x na semana</li>
+            <li>Fazer cardio 5x na semana</li>
+        </ul>
+        
+        <div id="insercaoDiaria">
+            <p>Preencha os dados para o dia <span id="diaAtual"></span>:</p>
+            <label>Beber 2L de água? (1 = Sim, 0 = Não)</label>
+            <input type="number" id="aguaInput"><br>
+
+            <label>Treinou abdômen? (1 = Sim, 0 = Não)</label>
+            <input type="number" id="absInput"><br>
+
+            <label>Treinou cardio? (1 = Sim, 0 = Não)</label>
+            <input type="number" id="cardioInput"><br>
+
+            <button onclick="voltar()">Voltar</button>
+            <button onclick="confirmarDia()">Confirmar</button>
+        </div>
+    </div>
+
+    <script>
+        // Variáveis Globais
+        let nome = "";
+        let aguaMC = 0, absMC = 0, cardMC = 0;
+        let diaAtual = 1;
+        let historico = [];
+
+        // Função para registrar usuário
+        function registrarUsuario() {
+            nome = document.getElementById("nomeUsuario").value;
+
+            if (nome.length > 0) {
+                // Mensagem de boas-vindas
+                document.getElementById("boasVindas").innerText = "Bem-vindo(a), " + nome + "!";
+                document.getElementById("cadastro").style.display = "none";
+                document.getElementById("desafio").style.display = "block";
+                atualizarDia();
+            } else {
+                alert("Por favor, digite um nome válido.");
+            }
+        }
+
+        // Função para atualizar o dia
+        function atualizarDia() {
+            document.getElementById("diaAtual").innerText = diaAtual;
+        }
+
+        // Função para confirmar o progresso do dia
+        function confirmarDia() {
+            let aguaInput = parseInt(document.getElementById("aguaInput").value);
+            let absInput = parseInt(document.getElementById("absInput").value);
+            let cardioInput = parseInt(document.getElementById("cardioInput").value);
+
+            // Validação dos dados inseridos
+            if (aguaInput !== 0 && aguaInput !== 1 || absInput !== 0 && absInput !== 1 || cardioInput !== 0 && cardioInput !== 1) {
+                alert("Por favor, insira 0 ou 1 para todas as respostas.");
+                return;
+            }
+
+            // Atualizando os contadores
+            aguaMC += aguaInput;
+            absMC += absInput;
+            cardMC += cardioInput;
+
+            // Salvando o histórico do dia
+            historico.push({
+                dia: diaAtual,
+                agua: aguaInput,
+                abs: absInput,
+                cardio: cardioInput
+            });
+
+            // Avançar para o próximo dia
+            if (diaAtual < 31) {
+                diaAtual++;
+                atualizarDia();
+                resetarInputs();
+            } else {
+                verificarDesafio();
+            }
+        }
+
+        // Função para voltar (corrigir erro no dia anterior)
+        function voltar() {
+            if (diaAtual > 1) {
+                diaAtual--;
+                let dadosAnteriores = historico.pop();
+
+                // Reverter os contadores
+                aguaMC -= dadosAnteriores.agua;
+                absMC -= dadosAnteriores.abs;
+                cardMC -= dadosAnteriores.cardio;
+
+                atualizarDia();
+            } else {
+                alert("Você já está no primeiro dia.");
+            }
+        }
+
+        // Função para resetar os inputs
+        function resetarInputs() {
+            document.getElementById("aguaInput").value = "";
+            document.getElementById("absInput").value = "";
+            document.getElementById("cardioInput").value = "";
+        }
+
+        // Função para verificar se o desafio foi concluído com sucesso
+        function verificarDesafio() {
+            if (aguaMC >= 31 && absMC >= 15 && cardMC >= 24) {
+                alert("Parabéns, " + nome + "! Você completou o desafio com sucesso!");
+            } else {
+                alert("Desafio não concluído. Continue tentando!");
+            }
+        }
+    </script>
+</body>
+</html>
